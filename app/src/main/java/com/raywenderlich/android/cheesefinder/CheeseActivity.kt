@@ -36,11 +36,13 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_cheeses.*
 import java.util.concurrent.TimeUnit
 
 class CheeseActivity : BaseSearchActivity() {
+    private lateinit var disposable: Disposable
 
     override fun onStart() {
         super.onStart()
@@ -49,7 +51,7 @@ class CheeseActivity : BaseSearchActivity() {
         // MERGE button and text changes -> search fires in both cases
         val searchTextObservable = Flowable.merge<String>(buttonClickStream, textChangeStream)
 
-        searchTextObservable
+        disposable = searchTextObservable
                 // Specify that code should start on main thread
                 .observeOn(AndroidSchedulers.mainThread())
                 // Progress will be showed every time a new item is emitted
@@ -62,6 +64,15 @@ class CheeseActivity : BaseSearchActivity() {
                     hideProgress()
                     showResult(it)
                 }
+    }
+
+    // App is successfully avoiding RxJava memory leaks
+    @Override
+    override fun onStop() {
+        super.onStop()
+        if (!disposable.isDisposed) {
+            disposable.dispose()
+        }
     }
 
     // Observe Button Clicks
