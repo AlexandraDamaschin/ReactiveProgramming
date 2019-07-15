@@ -42,9 +42,6 @@ class CheeseActivity : BaseSearchActivity() {
 
     override fun onStart() {
         super.onStart()
-//        val searchTextObservable = createButtonClickObservable()
-//        val searchTextObservable = createTextChangeObservable()
-
         val buttonClickStream = createButtonClickObservable()
         val textChangeStream = createTextChangeObservable()
         // MERGE button and text changes -> search fires in both cases
