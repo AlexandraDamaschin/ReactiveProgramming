@@ -30,6 +30,25 @@
 
 package com.raywenderlich.android.cheesefinder
 
+import io.reactivex.Observable
+import kotlinx.android.synthetic.main.activity_cheeses.*
+
 class CheeseActivity : BaseSearchActivity() {
+    // Observe Button Clicks
+    private fun createButtonClickObservable(): Observable<String> {
+        // Create an observable
+        return Observable.create { emitter ->
+            searchButton.setOnClickListener {
+                // On click event calls onNext and pass the value of editText
+                emitter.onNext(queryEditText.text.toString())
+            }
+
+            // To prevent memory leaks
+            emitter.setCancellable {
+                searchButton.setOnClickListener(null)
+            }
+        }
+    }
+
 
 }
